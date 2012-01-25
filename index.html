@@ -5,24 +5,20 @@
 	<title>Type-Training</title>
 	<meta nema="author" content="Johan Lindskogen" />
 	<style type="text/css">
+	body {font-family: sans-serif;font-size: 16px; text-align: center;}
 	#container{width:500px;margin:0 auto;}
 	img {border:0;}
-	.selected {
-		font-size: 30px;
-	}
-	#key span {
-		-webkit-transition: all 200ms ease-out;
-	}
+	.selected {font-size: 30px;}
+	#key span {-webkit-transition: all 200ms ease; -moz-transition: all 200ms ease; -o-transition: all 200ms ease; margin: 5px;}
 	</style>
 </head>
 <body onload="MainRow = new List();MainRow.newKeys();">
 <div id="container">
-	<span id="key" autofocus></span>
+	<div id="key"></div>
 	<span id="points">0</span>
 </div>
  
 <script type="text/javascript">
-	var lang = navigator.language?navigator.language:"en";
 	var keyArray = {
 		en: {
 			top:['q','w','e','r','t','y','u','i','o','p'],
@@ -35,12 +31,11 @@
 			bottom:['z','x','c','v','b','n','m',',','.','-']
 		}
 	};
-	var MainRow;
-	var currentKey;
+	var lang = keyArray[navigator.language]?navigator.language:"en";
+	var points = 0, MainRow, currentKey, num;
 	var elem = document.getElementById('key');
 	var pts = document.getElementById('points');
-	var num;
-	var uniqueKey = function(){
+	var uniqueKey = function() {
 		do {
 			var newNum = Math.floor(((Math.random()*10) % keyArray[lang].middle.length-1) + 1);
 		} while(newNum == num);
@@ -48,7 +43,7 @@
 		return newNum;
 		
 	};
-	var List = function(){
+	var List = function() {
 		this.keys;
 		this.keyElems;
 		this.index;
@@ -56,8 +51,7 @@
 			if (String.fromCharCode(pressedKey) == this.keys[this.index]){
 				changePts(1);
 				this.nextKey();
-			}
-			else
+			} else
 				changePts(-1);
 		};
 		this.nextKey = function(){
@@ -82,7 +76,6 @@
 				this.keyElems.push(newEl);
 				elem.appendChild(newEl);
 			}
-			console.log(this.keys,this.keyElems);
 		};
 	};
 	var getKey = function(){	
@@ -91,7 +84,7 @@
 		currentKey = keyArray[num];
 	};
 	var changePts = function(val){
-		pts.innerHTML = parseInt(pts.innerHTML) + val;
+		pts.innerHTML = points = points + val;
 	};
 	document.onkeypress = function(e){
 		var evObj = event;
