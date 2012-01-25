@@ -12,47 +12,41 @@
 	#key span {-webkit-transition: all 200ms ease; -moz-transition: all 200ms ease; -o-transition: all 200ms ease; margin: 5px;}
 	</style>
 </head>
-<body onload="MainRow = new List();MainRow.newKeys();">
+<body onload="MainRow = new List();">
 <div id="container">
 	<div id="key"></div>
 	<span id="points">0</span>
 </div>
+<input type="button" onclick="MainRow.newKeys();this.outerHTML='';" value="Starta!" id="btn"/>
  
 <script type="text/javascript">
 	var keyArray = {
-		en: {
-			top:['q','w','e','r','t','y','u','i','o','p'],
-			middle:['a','s','d','f','g','h','j','k','l',';'],
-			bottom:['z','x','c','v','b','n','m',',','.','-']
-		},
-		sv: {
-			top:['q','w','e','r','t','y','u','i','o','p','å'],
-			middle:['a','s','d','f','g','h','j','k','l','ö'],
-			bottom:['z','x','c','v','b','n','m',',','.','-']
-		}
+		en: [
+				['q','w','e','r','t','y','u','i','o','p'],
+				['a','s','d','f','g','h','j','k','l',';'],
+				['z','x','c','v','b','n','m',',','.','-']
+		],
+		sv: [
+				['q','w','e','r','t','y','u','i','o','p','å'],
+				['a','s','d','f','g','h','j','k','l','ö','ä'],
+				['z','x','c','v','b','n','m',',','.','-']
+		]
 	};
 	var lang = keyArray[navigator.language]?navigator.language:"en";
 	var points = 0, MainRow, currentKey, num;
 	var elem = document.getElementById('key');
 	var pts = document.getElementById('points');
-	var uniqueKey = function() {
-		do {
-			var newNum = Math.floor(((Math.random()*10) % keyArray[lang].middle.length-1) + 1);
-		} while(newNum == num);
-		num = newNum;
-		return newNum;
-		
-	};
 	var List = function() {
+		this.started = false;
 		this.keys;
 		this.keyElems;
 		this.index;
 		this.checkKey = function(pressedKey){
-			if (String.fromCharCode(pressedKey) == this.keys[this.index]){
-				changePts(1);
+			if (String.fromCharCode(pressedKey) === this.keys[this.index]){
+				pts.innerHTML = ++points;
 				this.nextKey();
 			} else
-				changePts(-1);
+				pts.innerHTML = --points;
 		};
 		this.nextKey = function(){
 			this.keyElems[this.index].className = '';
@@ -63,12 +57,13 @@
 			this.keyElems[++this.index].className = 'selected';
 		};
 		this.newKeys = function(){
+			this.started = true;
 			this.keys = [];
 			this.keyElems = [];
 			elem.innerHTML = '';
 			this.index = 0;
 			for (var i=0; i<10; i++){
-				this.keys.push(keyArray[lang].middle[uniqueKey()]);
+				this.keys.push(keyArray[lang][Math.floor(Math.random()*10)%3][uniqueKey()]);
 				var newEl = document.createElement('span');
 				newEl.innerHTML = this.keys[i];
 				if (i == 0)
@@ -78,17 +73,23 @@
 			}
 		};
 	};
-	var getKey = function(){	
-		num = uniqueKey();
-		elem.innerHTML = keyArray[num];
-		currentKey = keyArray[num];
-	};
-	var changePts = function(val){
-		pts.innerHTML = points = points + val;
+	var uniqueKey = function() {
+		do {
+			var newNum = Math.floor(((Math.random()*10) % keyArray[lang][Math.floor(Math.random()*10)%3].length-1) + 1);
+		} while(newNum == num);
+		num = newNum;
+		return newNum;
 	};
 	document.onkeypress = function(e){
-		var evObj = event;
-		MainRow.checkKey(evObj.keyCode);
+		if(event.keyCode === 13){
+			if (MainRow.started === false){
+				MainRow.newKeys();
+				document.getElementById('btn').outerHTML='';
+			} else
+				return;
+		}
+		else
+			MainRow.checkKey(event.keyCode);
 	};
 </script>
 </body>
