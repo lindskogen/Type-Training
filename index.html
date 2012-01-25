@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Type-Training</title>
+	<meta nema="author" content="Johan Lindskogen" />
+	<link href="//fonts.googleapis.com/css?family=Delius|Maven Pro" rel="stylesheet" type="text/css">
+	<style type="text/css">
+	#container{width:500px;margin:0 auto;}
+	img {border:0;}
+	.selected {font-size: 30px;}
+	</style>
+</head>
+<body onload="MainRow = new List();MainRow.newKeys();">
+<div id="container">
+	<span id="key" autofocus ></span>
+	<span id="points">0</span>
+</div>
+ 
+<script type="text/javascript">
+	var lang = navigator.language;
+	var keyArray = {
+		en: {
+			middle:['a','s','d','f','g','h','j','k','l',';']
+		},
+		sv: {
+			middle:['a','s','d','f','g','h','j','k','l','ö']
+		}
+	};
+	var MainRow;
+	var currentKey;
+	var elem = document.getElementById('key');
+	var pts = document.getElementById('points');
+	var num;
+	var uniqueKey = function(){
+		do {
+			var newNum = Math.floor(((Math.random()*10) % keyArray[lang].middle.length-1) + 1);
+		} while(newNum == num);
+		num = newNum;
+		return newNum;
+		
+	};
+	var List = function(){
+		this.keys;
+		this.keyElems;
+		this.index;
+		this.checkKey = function(pressedKey){
+			if (String.fromCharCode(pressedKey) == this.keys[this.index]){
+				changePts(1);
+				this.nextKey();
+			}
+			else
+				changePts(-1);
+		};
+		this.nextKey = function(){
+			if (this.index == this.keys.length){
+				this.newKeys();
+				return;
+			}
+			this.keyElems[this.index].className = '';
+			this.keyElems[++this.index].className = 'selected';
+		};
+		this.newKeys = function(){
+			this.keys = [];
+			this.keyElems = [];
+			this.index = 0;
+			for (var i=0; i<10; i++){
+				this.keys.push(keyArray[lang].middle[uniqueKey()]);
+				var newEl = document.createElement('span');
+				newEl.innerHTML = this.keys[i];
+				if (i == 0)
+					newEl.className = 'selected';
+				this.keyElems.push(newEl);
+				elem.appendChild(newEl);
+			}
+			console.log(this.keys,this.keyElems);
+		};
+	};
+	var getKey = function(){	
+		num = uniqueKey();
+		elem.innerHTML = keyArray[num];
+		currentKey = keyArray[num];
+	};
+	var changePts = function(val){
+		pts.innerHTML = parseInt(pts.innerHTML) + val;
+	};
+	document.onkeypress = function(e){
+		var evObj = event;
+		MainRow.checkKey(evObj.keyCode);
+	};
+</script>
+</body>
+</html>
